@@ -1,8 +1,8 @@
 {
   "name": "seo-toolkit",
-  "version": "0.1.0",
-  "description": "End-to-end SEO + AI-search discoverability stack for any production website. Walks through Google Search Console verification, sitemap submission, Bing Webmaster Tools import, IndexNow setup with auto-ping CI, Google Analytics 4 wiring, Google Business Profile setup, share-preview metadata polish, and the dynamic-OG fallback pattern. Battle-tested on real deploys — includes the gotchas (WOFF2 vs TTF, cross-OS file writes, PowerShell brackets) that bit us in production.",
+  "version": "0.2.0",
+  "description": "Audit a live website for the SEO and AI-search basics with a zero-install script (robots, sitemap, noindex, canonical, OG image, JSON-LD, IndexNow key), fix what fails, and set up IndexNow auto-ping on every deploy. Owner-only steps (Search Console, Bing, GA4, Business Profile) come as numbered clicks.",
   "author": { "name": "DOZI AI" },
-  "keywords": ["seo", "ai-search", "google-search-console", "bing", "indexnow", "analytics", "google-business", "structured-data", "open-graph"],
+  "keywords": ["seo", "ai-search", "audit", "indexnow", "sitemap", "robots", "open-graph", "structured-data", "search-console"],
   "license": "MIT"
 }

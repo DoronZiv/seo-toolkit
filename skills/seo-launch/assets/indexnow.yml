@@ -1,0 +1,50 @@
+# .github/workflows/indexnow.yml
+# After every push to main: wait for the deploy, read the live sitemap, ping IndexNow.
+# Setup: repo variable SITE_URL (e.g. https://www.example.com),
+#        repo secret INDEXNOW_SECRET (same value as the hosting env var).
+name: IndexNow auto-ping
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      SITE_URL: ${{ vars.SITE_URL }}
+      INDEXNOW_SECRET: ${{ secrets.INDEXNOW_SECRET }}
+    steps:
+      - name: Wait for deploy
+        run: sleep 120
+
+      - name: Ping IndexNow with the live sitemap URLs
+        run: |
+          node --input-type=module - <<'EOF'
+          const { SITE_URL, INDEXNOW_SECRET } = process.env;
+          const fail = (m) => { console.log(`::error::${m}`); process.exit(1); };
+          if (!SITE_URL) fail('repo variable SITE_URL is not set');
+          if (!INDEXNOW_SECRET) fail('repo secret INDEXNOW_SECRET is not set');
+          const site = SITE_URL.replace(/\/$/, '');
+
+          const sm = await fetch(`${site}/sitemap.xml`, { signal: AbortSignal.timeout(30000) });
+          if (!sm.ok) fail(`sitemap.xml returned ${sm.status}`);
+          const urls = [...(await sm.text()).matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)].map((m) => m[1]);
+          console.log(`sitemap URLs: ${urls.length}`);
+          if (!urls.length) fail('sitemap has no URLs');
+
+          const res = await fetch(`${site}/api/indexnow`, {
+            method: 'POST',
+            headers: { 'x-indexnow-secret': INDEXNOW_SECRET, 'content-type': 'application/json' },
+            body: JSON.stringify({ urls }),
+            signal: AbortSignal.timeout(60000),
+          });
+          const out = await res.json().catch(() => ({}));
+          console.log('response:', JSON.stringify(out));
+          if (!out.ok) fail('IndexNow ping failed');
+          EOF

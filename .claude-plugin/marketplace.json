@@ -10,8 +10,8 @@
     {
       "name": "seo-toolkit",
       "source": "./",
-      "description": "SEO and AI-search launch stack: Search Console, Bing, IndexNow, GA4, Google Business Profile, share previews.",
-      "version": "0.1.0",
+      "description": "Audit a live site for SEO and AI-search basics with a zero-install script, fix what fails, set up IndexNow on every deploy.",
+      "version": "0.2.0",
       "category": "seo"
     }
   ]
